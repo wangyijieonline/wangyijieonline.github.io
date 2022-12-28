@@ -19,27 +19,30 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.14.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="Welcome to my first psot of github pages.">
+    <meta name="description" content="RISC-V has standardized a series of standard extensions beyond the integer base instructions which can be implemented or omitted as desired depending on the design goals (e.g. energy&#x2F;area&#x2F;pe">
 <meta property="og:type" content="article">
-<meta property="og:title" content="How to write articles use hexo markdown">
-<meta property="og:url" content="http://example.com/2022/12/28/hello-world/index.html">
+<meta property="og:title" content="Standard Extensions">
+<meta property="og:url" content="http://example.com/2022/10/09/Standard-Extensions/index.html">
 <meta property="og:site_name" content="山猫的blog">
-<meta property="og:description" content="Welcome to my first psot of github pages.">
+<meta property="og:description" content="RISC-V has standardized a series of standard extensions beyond the integer base instructions which can be implemented or omitted as desired depending on the design goals (e.g. energy&#x2F;area&#x2F;pe">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2022-12-28T09:08:00.000Z">
-<meta property="article:modified_time" content="2022-12-28T10:47:54.630Z">
+<meta property="article:published_time" content="2022-10-09T07:48:09.000Z">
+<meta property="article:modified_time" content="2022-12-28T11:57:37.000Z">
 <meta property="article:author" content="wangyijieonline">
+<meta property="article:tag" content="riscv">
+<meta property="article:tag" content="tech">
+<meta property="article:tag" content="embeded software">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="http://example.com/2022/12/28/hello-world/">
+<link rel="canonical" href="http://example.com/2022/10/09/Standard-Extensions/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2022/12/28/hello-world/","path":"2022/12/28/hello-world/","title":"How to write articles use hexo markdown"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2022/10/09/Standard-Extensions/","path":"2022/10/09/Standard-Extensions/","title":"Standard Extensions"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>How to write articles use hexo markdown | 山猫的blog</title>
+<title>Standard Extensions | 山猫的blog</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=4382596939"></script>
   <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":4382596939,"only_pageview":false}</script>
@@ -116,7 +119,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E6%96%87%E7%AB%A0"><span class="nav-number">1.</span> <span class="nav-text">创建文章</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%99%E6%96%87%E7%AB%A0%E6%B7%BB%E5%8A%A0%E5%88%86%E7%B1%BB%E5%92%8C%E6%A0%87%E7%AD%BE"><span class="nav-number">1.1.</span> <span class="nav-text">给文章添加分类和标签</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E2%80%9C%E9%98%85%E8%AF%BB%E5%85%A8%E6%96%87%E2%80%9D%E6%8C%89%E9%92%AE"><span class="nav-number">1.2.</span> <span class="nav-text">添加“阅读全文”按钮</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%9F%E6%88%90%E6%96%87%E7%AB%A0"><span class="nav-number">2.</span> <span class="nav-text">生成文章</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%84%E8%A7%88%E6%96%87%E7%AB%A0"><span class="nav-number">3.</span> <span class="nav-text">预览文章</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Overview"><span class="nav-number">1.</span> <span class="nav-text">Overview</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Naming-Convention"><span class="nav-number">2.</span> <span class="nav-text">Naming Convention</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -183,7 +186,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/12/28/hello-world/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/10/09/Standard-Extensions/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -196,12 +199,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="How to write articles use hexo markdown | 山猫的blog">
+      <meta itemprop="name" content="Standard Extensions | 山猫的blog">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          How to write articles use hexo markdown
+          Standard Extensions
         </h1>
 
         <div class="post-meta-container">
@@ -211,9 +214,24 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2022-12-28 17:08:00 / 修改时间：18:47:54" itemprop="dateCreated datePublished" datetime="2022-12-28T17:08:00+08:00">2022-12-28</time>
+      <time title="创建时间：2022-10-09 15:48:09" itemprop="dateCreated datePublished" datetime="2022-10-09T15:48:09+08:00">2022-10-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-12-28 19:57:37" itemprop="dateModified" datetime="2022-12-28T19:57:37+08:00">2022-12-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/risc-v/" itemprop="url" rel="index"><span itemprop="name">risc-v</span></a>
+        </span>
     </span>
 
   
@@ -226,19 +244,170 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>Welcome to my first psot of github pages.</p>
+        <p>RISC-V has standardized a series of <strong>standard extensions</strong> beyond the integer base instructions which can be implemented or omitted as desired depending on the design goals (e.g. energy&#x2F;area&#x2F;performance&#x2F;storage goals).</p>
 <span id="more"></span>
 
-<h2 id="创建文章"><a href="#创建文章" class="headerlink" title="创建文章"></a>创建文章</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">hexo new <span class="string">&quot;hello-world.md&quot;</span></span></span><br></pre></td></tr></table></figure>
-<h3 id="给文章添加分类和标签"><a href="#给文章添加分类和标签" class="headerlink" title="给文章添加分类和标签"></a>给文章添加分类和标签</h3><p>在（在这里.md）文件中设置tags和categories属性：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">title: Hello World!</span><br><span class="line">date: 2018-08-02 11:41:10</span><br><span class="line">tags:</span><br><span class="line">	- blog</span><br><span class="line">	- hexo</span><br><span class="line">categories:  hello</span><br><span class="line">---</span><br></pre></td></tr></table></figure>
-
-<h3 id="添加“阅读全文”按钮"><a href="#添加“阅读全文”按钮" class="headerlink" title="添加“阅读全文”按钮"></a>添加“阅读全文”按钮</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--more--&gt;</span><br></pre></td></tr></table></figure>
-
-<h2 id="生成文章"><a href="#生成文章" class="headerlink" title="生成文章"></a>生成文章</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">hexo clean &amp;&amp; hexo g</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="预览文章"><a href="#预览文章" class="headerlink" title="预览文章"></a>预览文章</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">hexo server</span></span><br></pre></td></tr></table></figure>
-<p>然后打开<code>http://127.0.0.1:4000</code>就可以看到文章预览。</p>
+<h2 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h2><p>By default, only the <strong>core ISA</strong> must be implemented presenting great opportunity for area and energy optimization. However, additional functionality is sometimes desired. RISC-V comes with a series of standard extensions that enable additional functionality beyond the <strong>core ISA</strong> such as <code>floating point</code> and operations and <code>bit</code> <code>manipulation</code>. Extensions can be implemented and omitted as desired. Those extensions are:</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Version</th>
+<th>Status</th>
+<th>Instruction Count</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>RV32I</td>
+<td>Base Integer Instruction Set - 32-bit</td>
+<td>2.1</td>
+<td>Frozen</td>
+<td>49</td>
+</tr>
+<tr>
+<td>RV32E</td>
+<td>Base Integer Instruction Set (embedded) - 32-bit, 16 registers</td>
+<td>1.9</td>
+<td>Open</td>
+<td>Same as RV32I</td>
+</tr>
+<tr>
+<td>RV64I</td>
+<td>Base Integer Instruction Set - 64-bit</td>
+<td>2.0</td>
+<td>Frozen</td>
+<td>14</td>
+</tr>
+<tr>
+<td>RV128I</td>
+<td>Base Integer Instruction Set - 128-bit</td>
+<td>1.7</td>
+<td>Open</td>
+<td>14</td>
+</tr>
+<tr>
+<td>Extension</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>M</td>
+<td>Standard Extension for Integer <strong>Multiplication</strong> and <strong>Division</strong></td>
+<td>2.0</td>
+<td>Frozen</td>
+<td>8</td>
+</tr>
+<tr>
+<td>A</td>
+<td>Standard Extension for <strong>Atomic</strong> Instructions</td>
+<td>2.0</td>
+<td>Frozen</td>
+<td>11</td>
+</tr>
+<tr>
+<td>F</td>
+<td>Standard Extension for Single-Precision <strong>Floating-Point</strong></td>
+<td>2.0</td>
+<td>Frozen</td>
+<td>25</td>
+</tr>
+<tr>
+<td>D</td>
+<td>Standard Extension for Double-Precision <strong>Floating-Point</strong></td>
+<td>2.0</td>
+<td>Frozen</td>
+<td>25</td>
+</tr>
+<tr>
+<td>G</td>
+<td><strong>Shorthand for the base and above extensions</strong></td>
+<td>n&#x2F;a</td>
+<td>n&#x2F;a</td>
+<td>n&#x2F;a</td>
+</tr>
+<tr>
+<td>Q</td>
+<td>Standard Extension for Quad-Precision <strong>Floating-Point</strong></td>
+<td>2.0</td>
+<td>Frozen</td>
+<td>27</td>
+</tr>
+<tr>
+<td>L</td>
+<td>Standard Extension for Decimal <strong>Floating-Point</strong></td>
+<td>0.0</td>
+<td>Open</td>
+<td>Undefined Yet</td>
+</tr>
+<tr>
+<td>C</td>
+<td>Standard Extension for <strong>Compressed</strong> Instructions</td>
+<td>2.0</td>
+<td>Frozen</td>
+<td>36</td>
+</tr>
+<tr>
+<td>B</td>
+<td>Standard Extension for <strong>Bit Manipulation</strong></td>
+<td>0.90</td>
+<td>Open</td>
+<td>42</td>
+</tr>
+<tr>
+<td>J</td>
+<td>Standard Extension for <strong>Dynamically Translated Languages</strong></td>
+<td>0.0</td>
+<td>Open</td>
+<td>Undefined Yet</td>
+</tr>
+<tr>
+<td>T</td>
+<td>Standard Extension for <strong>Transactional Memory</strong></td>
+<td>0.0</td>
+<td>Open</td>
+<td>Undefined Yet</td>
+</tr>
+<tr>
+<td>P</td>
+<td>Standard Extension for <strong>Packed-SIMD</strong> Instructions</td>
+<td>0.1</td>
+<td>Open</td>
+<td>Undefined Yet</td>
+</tr>
+<tr>
+<td>V</td>
+<td>Standard Extension for <strong>Vector</strong> Operations</td>
+<td>0.7</td>
+<td>Open</td>
+<td>186</td>
+</tr>
+<tr>
+<td>N</td>
+<td>Standard Extension for <strong>User-Level Interrupts</strong></td>
+<td>1.1</td>
+<td>Open</td>
+<td>3</td>
+</tr>
+<tr>
+<td>H</td>
+<td>Standard Extension for <strong>Hypervisor</strong></td>
+<td>0.0</td>
+<td>Open</td>
+<td>2</td>
+</tr>
+<tr>
+<td>S</td>
+<td>Standard Extension for <strong>Supervisor-level</strong> Instructions</td>
+<td>1.12</td>
+<td>Open</td>
+<td>7</td>
+</tr>
+</tbody></table>
+<h2 id="Naming-Convention"><a href="#Naming-Convention" class="headerlink" title="Naming Convention"></a>Naming Convention</h2><p>RISC-V defines an exact order that must be used to define the RISC-V ISA subset:<br><code>RV [32, 64, 128]</code> <code>I, M, A, F, D, G, Q, L, C, B, J, T, P, V, N</code></p>
+<p>For example, <code>RV32IMAFDQC</code> is legal, whereas <code>RV32IMAFDCQ</code> is not.</p>
 
     </div>
 
@@ -247,16 +416,21 @@
     
 
     <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/riscv/" rel="tag"># riscv</a>
+              <a href="/tags/tech/" rel="tag"># tech</a>
+              <a href="/tags/embeded-software/" rel="tag"># embeded software</a>
+          </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2022/12/15/sfence-vma-Supervisor-Memory-Management-Fence-Instruction/" rel="prev" title="sfence.vma - Supervisor Memory Management Fence Instruction">
-                  <i class="fa fa-chevron-left"></i> sfence.vma - Supervisor Memory Management Fence Instruction
-                </a>
             </div>
             <div class="post-nav-item">
+                <a href="/2022/12/15/sfence-vma-Supervisor-Memory-Management-Fence-Instruction/" rel="next" title="sfence.vma - Supervisor Memory Management Fence Instruction">
+                  sfence.vma - Supervisor Memory Management Fence Instruction <i class="fa fa-chevron-right"></i>
+                </a>
             </div>
           </div>
     </footer>

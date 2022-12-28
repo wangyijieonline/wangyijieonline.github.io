@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.lug.ustc.edu.cn/css?family=Noto+Serif+SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha256-Z1K5uhUaJXA7Ll0XrZ/0JhX4lAtZFpT6jkKrEDT0drU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.14.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta property="og:type" content="article">
+<meta property="og:title" content="sfence.vma - Supervisor Memory Management Fence Instruction">
+<meta property="og:url" content="http://example.com/2022/12/15/sfence-vma-Supervisor-Memory-Management-Fence-Instruction/index.html">
+<meta property="og:site_name" content="山猫的blog">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2afceb249d0e47c995d068be2c096cf6.png">
+<meta property="article:published_time" content="2022-12-15T07:18:37.000Z">
+<meta property="article:modified_time" content="2022-12-28T11:18:47.000Z">
+<meta property="article:author" content="wangyijieonline">
+<meta property="article:tag" content="riscv">
+<meta property="article:tag" content="tech">
+<meta property="article:tag" content="embeded software">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/2afceb249d0e47c995d068be2c096cf6.png">
+
+
+<link rel="canonical" href="http://example.com/2022/12/15/sfence-vma-Supervisor-Memory-Management-Fence-Instruction/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2022/12/15/sfence-vma-Supervisor-Memory-Management-Fence-Instruction/","path":"2022/12/15/sfence-vma-Supervisor-Memory-Management-Fence-Instruction/","title":"sfence.vma - Supervisor Memory Management Fence Instruction"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>sfence.vma - Supervisor Memory Management Fence Instruction | 山猫的blog</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=4382596939"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":4382596939,"only_pageview":false}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+
+
+  <script async defer data-website-id="" src=""></script>
+
+  <script defer data-domain="" src=""></script>
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">山猫的blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-overview-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="wangyijieonline"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">wangyijieonline</p>
+  <div class="site-description" itemprop="description">山猫的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">3</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/wangyijieonline" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;wangyijieonline" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:wangyijieonline@gmail.com" title="E-Mail → mailto:wangyijieonline@gmail.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/wangyijieonline" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;wangyijieonline" rel="noopener me" target="_blank"><i class="fab fa-weibo fa-fw"></i></a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/12/15/sfence-vma-Supervisor-Memory-Management-Fence-Instruction/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wangyijieonline">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="山猫的blog">
+      <meta itemprop="description" content="山猫的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="sfence.vma - Supervisor Memory Management Fence Instruction | 山猫的blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          sfence.vma - Supervisor Memory Management Fence Instruction
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-12-15 15:18:37" itemprop="dateCreated datePublished" datetime="2022-12-15T15:18:37+08:00">2022-12-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-12-28 19:18:47" itemprop="dateModified" datetime="2022-12-28T19:18:47+08:00">2022-12-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/risc-v/" itemprop="url" rel="index"><span itemprop="name">risc-v</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p><img src="https://img-blog.csdnimg.cn/2afceb249d0e47c995d068be2c096cf6.png" alt="在这里插入图片描述"></p>
+<span id="more"></span>
+
+<p>The supervisor memory-management fence instruction SFENCE.VMA is used to synchronize updates to in-memory memory-management data structures with current execution. Instruction execution causes implicit reads and writes to these data structures; however, these implicit references are ordinarily not ordered with respect to explicit loads and stores. Executing an SFENCE.VMA instruction guarantees that any previous stores already visible to the current RISC-V hart are ordered before certain implicit references by subsequent instructions in that hart to the memorymanagement data structures. The specific set of operations ordered by SFENCE.VMA is determined by rs1 and rs2, as described below. SFENCE.VMA is also used to invalidate entries in the address-translation cache associated with a hart (see Section 5.3.2). Further details on the behavior of this instruction are described in Section 3.1.6.5 and Section 3.7.2.<br>supervisor memory-management fence 指令 SFENCE.VMA 用于将内存中内存管理数据结构的更新与当前执行同步。 指令执行导致对这些数据结构的隐式读取和写入； 但是，这些隐式引用通常不针对显式加载和存储进行排序。 执行 SFENCE.VMA 指令可确保当前 RISC-V hart 已经可见的任何先前存储在该 hart 中的后续指令对内存管理数据结构的某些隐式引用之前进行排序(<strong>意思就是这条指令前面的执行完了才能执行后面的</strong>)。 SFENCE.VMA 命令的特定操作集由 rs1 和 rs2 确定，如下所述。 SFENCE.VMA 还用于使与 hart 关联的地址转换缓存中的条目无效（参见第 5.3.2 节）。 有关此指令行为的更多详细信息，请参见第 3.1.6.5 节和第 3.7.2 节。</p>
+<hr>
+<p>The SFENCE.VMA is used to flush any local hardware caches related to address translation. It is specified as a fence rather than a TLB flush to provide cleaner semantics with respect to which instructions are affected by the flush operation and to support a wider variety of dynamic caching structures and memory-management schemes. SFENCE.VMA is also used by higher privilege levels to synchronize page table writes and the address translation hardware.<br>SFENCE.VMA 用于刷新与地址转换相关的任何本地<strong>硬件缓存</strong>。 它被指定为<strong>fence</strong>而不是 TLB 刷新，以提供关于哪些指令受刷新操作影响的更清晰的语义，并支持更广泛的动态缓存结构和内存管理方案。 SFENCE.VMA 也被更高权限级别用来同步页表写入和地址转换硬件。</p>
+<hr>
+<p>SFENCE.VMA orders only the local hart’s implicit references to the memory-management data structures.<br>SFENCE.VMA 仅对本地 hart 对内存管理数据结构的隐式引用进行排序。</p>
+<hr>
+<p>Consequently, other harts must be notified separately when the memory-management data structures have been modified. One approach is to use 1) a local data fence to ensure local writes are visible globally, then 2) an interprocessor interrupt to the other thread, then 3) a local SFENCE.VMA in the interrupt handler of the remote thread, and finally 4) signal back to originating thread that operation is complete. This is, of course, the RISC-V analog to a TLB shootdown.</p>
+<p>因此，当内存管理数据结构被修改时，必须单独通知其他 harts。 一种方法是使用</p>
+<ol>
+<li>本地 data fence 以确保本地写入全局可见</li>
+<li>向另一个线程发出处理器间中断</li>
+<li>远程线程的中断处理程序中的本地 SFENCE.VMA</li>
+<li>向原始线程发回信号，表明操作已完成。</li>
+</ol>
+<p>当然，这是 RISC-V 对 TLB shootdown的模拟。</p>
+<p>For the common case that the translation data structures have only been modified for a single address mapping (i.e., one page or superpage), rs1 can specify a virtual address within that mapping to effect a translation fence for that mapping only. Furthermore, for the common case that the translation data structures have only been modified for a single address-space identifier, rs2 can specify the address space. The behavior of SFENCE.VMA depends on rs1 and rs2 as follows:<br>对于仅针对单个地址映射（即一页或超页）修改翻译数据结构的常见情况，rs1 可以在该映射中指定一个虚拟地址以仅对该映射产生翻译fence。 此外，对于仅针对单个地址空间标识符修改了转换数据结构的常见情况，rs2 可以指定地址空间。 SFENCE.VMA 的行为取决于 rs1 和 rs2，如下所示：</p>
+<ul>
+<li><p>If <em><strong>rs1&#x3D;x0</strong></em> and <em><strong>rs2&#x3D;x0</strong></em>, the fence orders all reads and writes made to any level of the page tables, for all address spaces. The fence also invalidates all address-translation cache entries, for all address spaces.<br>如果 rs1&#x3D;x0 和 rs2&#x3D;x0，则栅栏对所有地址空间的页表的任何级别的所有读取和写入进行排序。 栅栏还使所有地址空间的所有地址转换缓存条目无效。</p>
+</li>
+<li><p>If <em><strong>rs1&#x3D;x0</strong></em> and <em><strong>rs2̸&#x3D;x0</strong></em>, the fence orders all reads and writes made to any level of the page tables, but only for the address space identified by integer register rs2. Accesses to global mappings (see Section 5.3.1) are not ordered. The fence also invalidates all address-translation cache entries matching the address space identified by integer register rs2, except for entries containing global mappings.<br>如果 rs1&#x3D;x0 且 rs2̸&#x3D;x0，则栅栏对所有对页表的任何级别进行的读取和写入进行排序，但仅限于整数寄存器 rs2 标识的地址空间。 对全局映射的访问（参见第 5.3.1 节）是无序的。 栅栏还使所有匹配由整数寄存器 rs2 标识的地址空间的地址转换缓存条目无效，但包含全局映射的条目除外。</p>
+</li>
+<li><p>If <em><strong>rs1̸&#x3D;x0</strong></em> and <em><strong>rs2&#x3D;x0</strong></em>, the fence orders only reads and writes made to leaf page table entries corresponding to the virtual address in rs1, for all address spaces. The fence also invalidates all address-translation cache entries that contain leaf page table entries corresponding to the virtual address in rs1, for all address spaces.<br>如果 rs1̸&#x3D;x0 且 rs2&#x3D;x0，对于所有地址空间，栅栏命令仅对与 rs1 中的虚拟地址对应的叶页表条目进行读写。 对于所有地址空间，fence 还使包含与 rs1 中的虚拟地址对应的叶页表条目的所有地址转换缓存条目无效。</p>
+</li>
+<li><p>If <em><strong>rs1̸&#x3D;x0</strong></em> and <em><strong>rs2̸&#x3D;x0</strong></em>, the fence orders only reads and writes made to leaf page table entries corresponding to the virtual address in rs1, for the address space identified by integer register rs2. Accesses to global mappings are not ordered. The fence also invalidates all addresstranslation cache entries that contain leaf page table entries corresponding to the virtual address in rs1 and that match the address space identified by integer register rs2, except for entries containing global mappings.<br>如果 rs1̸&#x3D;x0 且 rs2̸&#x3D;x0，对于整数寄存器 rs2 标识的地址空间，栅栏命令仅对对应于 rs1 中的虚拟地址的叶页表条目进行读取和写入。 对全局映射的访问没有顺序。 栅栏还使所有地址转换缓存条目无效，这些条目包含与 rs1 中的虚拟地址相对应的叶页表条目，并且与整数寄存器 rs2 标识的地址空间匹配，但包含全局映射的条目除外。</p>
+</li>
+</ul>
+<p>If the value held in rs1 is not a valid virtual address, then the SFENCE.VMA instruction has no effect. No exception is raised in this case.<br>如果 rs1 中保存的值不是有效的虚拟地址，则 SFENCE.VMA 指令无效。 在这种情况下不会引发异常。</p>
+<p>When rs2̸&#x3D;x0, bits SXLEN-1:ASIDMAX of the value held in rs2 are reserved for future standard use. Until their use is defined by a standard extension, they should be zeroed by software and ignored by current implementations. Furthermore, if ASIDLEN &lt; ASIDMAX, the implementation shall ignore bits ASIDMAX-1:ASIDLEN of the value held in rs2.<br>当 rs2̸&#x3D;x0 时，rs2 中保存的值的位 SXLEN-1:ASIDMAX 保留供将来标准使用。 在它们的使用被标准扩展定义之前，它们应该被软件清零并被当前的实现忽略。 此外，如果 ASIDLEN &lt; ASIDMAX，实现将忽略 rs2 中保存的值的位 ASIDMAX-1:ASIDLEN。</p>
+<hr>
+<p>It is always legal to over-fence, e.g., by fencing only based on a subset of the bits in rs1 and&#x2F;or rs2, and&#x2F;or by simply treating all SFENCE.VMA instructions as having rs1&#x3D;x0 and&#x2F;or rs2&#x3D;x0. For example, simpler implementations can ignore the virtual address in rs1 and the ASID value in rs2 and always perform a global fence. The choice not to raise an exception when an invalid virtual address is held in rs1 facilitates this type of simplification.<br>过度防护总是合法的，例如，仅基于 rs1 和&#x2F;或 rs2 中的位子集进行防护，和&#x2F;或简单地将所有 SFENCE.VMA 指令视为具有 rs1&#x3D;x0 和&#x2F;或 rs2&#x3D;x0 . 例如，更简单的实现可以忽略 rs1 中的虚拟地址和 rs2 中的 ASID 值，并始终执行全局隔离。 选择在 rs1 中保存无效虚拟地址时不引发异常有助于这种类型的简化。</p>
+<hr>
+<p>An implicit read of the memory-management data structures may return any translation for an address that was valid at any time since the most recent SFENCE.VMA that subsumes that address. The ordering implied by SFENCE.VMA does not place implicit reads and writes to the memorymanagement data structures into the global memory order in a way that interacts cleanly with the standard RVWMO ordering rules. In particular, even though an SFENCE.VMA orders prior explicit accesses before subsequent implicit accesses, and those implicit accesses are ordered before their associated explicit accesses, SFENCE.VMA does not necessarily place prior explicit accesses before subsequent explicit accesses in the global memory order. These implicit loads also need not otherwise obey normal program order semantics with respect to prior loads or stores to the same address.<br> 内存管理数据结构的隐式读取可能会返回自包含该地址的最近 SFENCE.VMA 以来任何时间有效的地址的任何转换。 SFENCE.VMA 隐含的排序不会以与标准 RVWMO 排序规则完全交互的方式将对内存管理数据结构的隐式读取和写入放入全局内存顺序。 特别是，即使 SFENCE.VMA 在后续隐式访问之前对先前的显式访问进行排序，并且那些隐式访问在其关联的显式访问之前进行排序，SFENCE.VMA 不一定将先前的显式访问置于全局内存顺序中的后续显式访问之前。 这些隐式加载也不需要以其他方式遵守关于先前加载或存储到同一地址的正常程序顺序语义。</p>
+<hr>
+<p>A consequence of this specification is that an implementation may use any translation for an address that was valid at any time since the most recent SFENCE.VMA that subsumes that address. In particular, if a leaf PTE is modified but a subsuming SFENCE.VMA is not executed, either the old translation or the new translation will be used, but the choice is unpredictable. The behavior is otherwise well-defined.<br>此规范的结果是，实现可以使用任何地址的任何转换，该地址自包含该地址的最新 SFENCE.VMA 以来一直有效。 特别是，如果修改叶 PTE 但未执行包含 SFENCE.VMA，则将使用旧翻译或新翻译，但选择是不可预测的。 该行为在其他方面是明确定义的。</p>
+<p>In a conventional TLB design, it is possible for multiple entries to match a single address if, for example, a page is upgraded to a superpage without first clearing the original non-leaf PTE’s valid bit and executing an SFENCE.VMA with rs1&#x3D;x0. In this case, a similar remark applies: it is unpredictable whether the old non-leaf PTE or the new leaf PTE is used, but the behavior is otherwise well defined.<br>在传统的 TLB 设计中，多个条目可能匹配单个地址，例如，如果页面升级为超级页面而无需首先清除原始非叶 PTE 的有效位并执行 rs1 &#x3D; x0 的 SFENCE.VMA . 在这种情况下，类似的评论适用：使用旧的非叶 PTE 还是新的叶 PTE 是不可预测的，但行为在其他方面是明确定义的。</p>
+<p>Another consequence of this specification is that it is generally unsafe to update a PTE using a set of stores of a width less than the width of the PTE, as it is legal for the implementation to read the PTE at any time, including when only some of the partial stores have taken effect.This specification permits the caching of PTEs whose V (Valid) bit is clear. Operating systems must be written to cope with this possibility, but implementers are reminded that eagerly caching invalid PTEs will reduce performance by causing additional page faults.<br>此规范的另一个结果是，使用一组宽度小于 PTE 宽度的存储来更新 PTE 通常是不安全的，因为实现在任何时候读取 PTE 都是合法的，包括当只有一些 的部分商店已经生效。此规范允许缓存 V（有效）位已清除的 PTE。 必须编写操作系统来应对这种可能性，但提醒实施者，急切缓存无效的 PTE 会导致额外的页面错误，从而降低性能。</p>
+<hr>
+<p>Implementations must only perform implicit reads of the translation data structures pointed to by the current contents of the satp register or a subsequent valid (V&#x3D;1) translation data structure entry, and must only raise exceptions for implicit accesses that are generated as a result of instruction execution, not those that are performed speculatively. Changes to the sstatus fields SUM and MXR take effect immediately, without the need to execute an SFENCE.VMA instruction. Changing satp.MODE from Bare to other modes and vice versa also takes effect immediately, without the need to execute an SFENCE.VMA instruction. Likewise, changes to satp.ASID take effect immediately.<br>实现必须只对 satp 寄存器的当前内容或后续有效（V &#x3D; 1）翻译数据结构条目指向的翻译数据结构执行隐式读取，并且必须只对由于以下原因生成的隐式访问引发异常 指令执行，而不是那些推测性地执行的指令。 对 sstatus 字段 SUM 和 MXR 的更改立即生效，无需执行 SFENCE.VMA 指令。 将 satp.MODE 从 Bare 更改为其他模式（反之亦然）也会立即生效，无需执行 SFENCE.VMA 指令。 同样，对 satp.ASID 的更改会立即生效。</p>
+<hr>
+<p>The following common situations typically require executing an SFENCE.VMA instruction:<br>以下常见情况通常需要执行 SFENCE.VMA 指令：</p>
+<ul>
+<li><p>When software recycles an ASID (i.e., reassociates it with a different page table), it should first change satp to point to the new page table using the recycled ASID, then execute SFENCE.VMA with rs1&#x3D;x0 and rs2 set to the recycled ASID. Alternatively, software can execute the same SFENCE.VMA instruction while a different ASID is loaded into satp, provided the next time satp is loaded with the recycled ASID, it is simultaneously loaded with the new page table.<br>当软件回收 ASID（即，将其与不同的页表重新关联）时，它应该首先更改 satp 以使用回收的 ASID 指向新的页表，然后执行 SFENCE.VMA 并将 rs1&#x3D;x0 和 rs2 设置为回收的 ASID。 或者，软件可以在将不同的 ASID 加载到 satp 时执行相同的 SFENCE.VMA 指令，前提是下次 satp 加载回收的 ASID 时，它会同时加载新的页表。</p>
+</li>
+<li><p>If the implementation does not provide ASIDs, or software chooses to always use ASID 0, then after every satp write, software should execute SFENCE.VMA with rs1&#x3D;x0. In the common case that no global translations have been modified, rs2 should be set to a register other than x0 but which contains the value zero, so that global translations are not flushed.<br>如果实施不提供 ASID，或者软件选择始终使用 ASID 0，则在每次 satp 写入之后，软件应执行 SFENCE.VMA 并设置 rs1&#x3D;x0。 在没有修改全局翻译的常见情况下，rs2 应设置为除 x0 但包含值零的寄存器，以便不刷新全局翻译。</p>
+</li>
+<li><p>If software modifies a non-leaf PTE, it should execute SFENCE.VMA with rs1&#x3D;x0. If any PTE along the traversal path had its G bit set, rs2 must be x0; otherwise, rs2 should be set to the ASID for which the translation is being modified.<br>如果软件修改了非叶 PTE，它应该使用 rs1&#x3D;x0 执行 SFENCE.VMA。 如果遍历路径上的任何 PTE 都设置了 G 位，则 rs2 必须为 x0； 否则，rs2 应设置为要为其修改翻译的 ASID。 如果软件修改叶 PTE，它应该执行 SFENCE.VMA，并将 rs1 设置为页面内的虚拟地址。 如果遍历路径上的任何 PTE 都设置了 G 位，则 rs2 必须为 x0； 否则，rs2 应设置为要为其修改翻译的 ASID。</p>
+</li>
+<li><p>If software modifies a leaf PTE, it should execute SFENCE.VMA with rs1 set to a virtual address within the page. If any PTE along the traversal path had its G bit set, rs2 must be x0; otherwise, rs2 should be set to the ASID for which the translation is being modified.<br>如果软件修改叶 PTE，它应该执行 SFENCE.VMA，并将 rs1 设置为页面内的虚拟地址。 如果遍历路径上的任何 PTE 都设置了 G 位，则 rs2 必须为 x0； 否则，rs2 应设置为要为其修改翻译的 ASID。</p>
+</li>
+<li><p>For the special cases of increasing the permissions on a leaf PTE and changing an invalid PTE to a valid leaf, software may choose to execute the SFENCE.VMA lazily. After modifying the PTE but before executing SFENCE.VMA, either the new or old permissions will be used. In the latter case, a page-fault exception might occur, at which point software should execute SFENCE.VMA in accordance with the previous bullet point.<br>对于增加叶 PTE 权限并将无效 PTE 更改为有效叶的特殊情况，软件可以选择延迟执行 SFENCE.VMA。 在修改 PTE 之后但在执行 SFENCE.VMA 之前，将使用新权限或旧权限。 在后一种情况下，可能会发生页面错误异常，此时软件应根据前面的要点执行 SFENCE.VMA。</p>
+</li>
+</ul>
+<hr>
+<p>If a hart employs an address-translation cache, that cache must appear to be private to that hart. In particular, the meaning of an ASID is local to a hart; software may choose to use the same ASID to refer to different address spaces on different harts.<br>如果 hart 使用地址转换缓存，则该缓存必须看起来是该 hart 私有的。 特别是，ASID 的含义对 hart 来说是本地的； 软件可以选择使用相同的 ASID 来引用不同 harts 上的不同地址空间。</p>
+<hr>
+<p>A future extension could redefine ASIDs to be global across the SEE, enabling such options as<br>shared translation caches and hardware support for broadcast TLB shootdown. However, as OSes<br>have evolved to significantly reduce the scope of TLB shootdowns using novel ASID-management<br>techniques, we expect the local-ASID scheme to remain attractive for its simplicity and possibly<br>better scalability.<br>未来的扩展可能会将 ASID 重新定义为跨 SEE 的全局，从而启用共享翻译缓存和广播 TLB shootdown的硬件支持等选项。 然而，随着操作系统已经发展到使用新的 ASID 管理技术显着减少 TLB shootdown的范围，我们预计本地 ASID 方案将因其简单性和可能更好的可扩展性而保持吸引力。</p>
+<hr>
+<p>For implementations that make satp.MODE read-only zero (always Bare), attempts to execute an<br>SFENCE.VMA instruction might raise an illegal instruction exception.<br>对于使 satp.MODE 只读为零（始终为 Bare）的实现，尝试执行 SFENCE.VMA 指令可能会引发非法指令异常。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/riscv/" rel="tag"># riscv</a>
+              <a href="/tags/tech/" rel="tag"># tech</a>
+              <a href="/tags/embeded-software/" rel="tag"># embeded software</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/10/09/Standard-Extensions/" rel="prev" title="Standard Extensions">
+                  <i class="fa fa-chevron-left"></i> Standard Extensions
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/12/28/hello-world/" rel="next" title="How to write articles use hexo markdown">
+                  How to write articles use hexo markdown <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Authored by wangyijieonline. All right reserved.</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
