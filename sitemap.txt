@@ -1,0 +1,15 @@
+https://wangyijieonline.github.io/about/index.html
+https://wangyijieonline.github.io/categories/index.html
+https://wangyijieonline.github.io/tags/index.html
+https://wangyijieonline.github.io/2022/12/28/hello-world/
+https://wangyijieonline.github.io/2022/05/05/use-request-firmware-load-firmware-in-rootfs/
+https://wangyijieonline.github.io/2022/10/09/Standard-Extensions/
+https://wangyijieonline.github.io/2022/12/15/sfence-vma-Supervisor-Memory-Management-Fence-Instruction/
+https://wangyijieonline.github.io/
+https://wangyijieonline.github.io/tags/riscv/
+https://wangyijieonline.github.io/tags/embeded-software/
+https://wangyijieonline.github.io/tags/tech/
+https://wangyijieonline.github.io/tags/linux/
+https://wangyijieonline.github.io/tags/bsp/
+https://wangyijieonline.github.io/categories/risc-v/
+https://wangyijieonline.github.io/categories/linux/

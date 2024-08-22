@@ -1,0 +1,638 @@
+
+<!DOCTYPE html><html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.29.1" theme-name="Stellar" theme-version="1.29.1">
+  
+  <meta name="generator" content="Hexo 7.3.0">
+  <meta http-equiv='x-dns-prefetch-control' content='on' />
+  
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True" >
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000">
+  <meta name="theme-color" content="#f9fafb">
+  
+  <title>sfence.vma - Supervisor Memory Management Fence Instruction - 山猫的blog</title>
+
+  
+    <meta property="og:type" content="article">
+<meta property="og:title" content="sfence.vma - Supervisor Memory Management Fence Instruction">
+<meta property="og:url" content="https://wangyijieonline.github.io/2022/12/15/sfence-vma-Supervisor-Memory-Management-Fence-Instruction/index.html">
+<meta property="og:site_name" content="山猫的blog">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2afceb249d0e47c995d068be2c096cf6.png">
+<meta property="article:published_time" content="2022-12-15T07:18:37.000Z">
+<meta property="article:modified_time" content="2022-12-28T11:18:47.000Z">
+<meta property="article:author" content="wangyijieonline">
+<meta property="article:tag" content="riscv">
+<meta property="article:tag" content="embeded software">
+<meta property="article:tag" content="tech">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/2afceb249d0e47c995d068be2c096cf6.png">
+  
+  
+  
+  <meta name="keywords" content="riscv,embeded software,tech">
+
+  <!-- feed -->
+  
+
+  <link rel="stylesheet" href="/css/main.css?v=1.29.1">
+
+  
+
+  
+
+  
+</head>
+<body>
+
+<div class="l_body s:aa content tech" id="start" layout="post" ><aside class="l_left"><div class="leftbar-container">
+
+
+<header class="header"><div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="undefined" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/image/2659360.svg';"></a><a class="title" href="/"><div class="main" ff="title">山猫的blog</div></a></div></header>
+
+<div class="nav-area">
+<div class="search-wrapper" id="search-wrapper"><form class="search-form"><a class="search-button" onclick="document.getElementById(&quot;search-input&quot;).focus();"><svg t="1705074644177" viewBox="0 0 1025 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1560" width="200" height="200"><path d="M1008.839137 935.96571L792.364903 719.491476a56.783488 56.783488 0 0 0-80.152866 0 358.53545 358.53545 0 1 1 100.857314-335.166073 362.840335 362.840335 0 0 1-3.689902 170.145468 51.248635 51.248635 0 1 0 99.217358 26.444296 462.057693 462.057693 0 1 0-158.255785 242.303546l185.930047 185.725053a51.248635 51.248635 0 0 0 72.568068 0 51.248635 51.248635 0 0 0 0-72.978056z" p-id="1561"></path><path d="M616.479587 615.969233a50.428657 50.428657 0 0 0-61.498362-5.534852 174.655348 174.655348 0 0 1-177.525271 3.484907 49.403684 49.403684 0 0 0-58.833433 6.76482l-3.074918 2.869923a49.403684 49.403684 0 0 0 8.609771 78.10292 277.767601 277.767601 0 0 0 286.992355-5.739847 49.403684 49.403684 0 0 0 8.404776-76.667958z" p-id="1562"></path></svg></a><input type="text" class="search-input" id="search-input" placeholder="站内搜索"></form><div id="search-result"></div><div class="search-no-result">没有找到内容！</div></div>
+
+
+<nav class="menu dis-select"></nav>
+</div>
+<div class="widgets">
+
+
+<widget class="widget-wrapper post-list"><div class="widget-header dis-select"><span class="name">最近更新</span></div><div class="widget-body fs14"><a class="item title" href="/2022/12/28/hello-world/"><span class="title">How to write articles use hexo markdown</span></a><a class="item title" href="/2022/05/05/use-request-firmware-load-firmware-in-rootfs/"><span class="title">use request_firmware() load firmware in rootfs</span></a><a class="item title" href="/2022/10/09/Standard-Extensions/"><span class="title">Standard Extensions</span></a><a class="item title" href="/2022/12/15/sfence-vma-Supervisor-Memory-Management-Fence-Instruction/"><span class="title">sfence.vma - Supervisor Memory Management Fence Instruction</span></a></div></widget>
+</div>
+
+</div></aside><div class="l_main" id="main">
+
+
+
+
+
+<div class="article banner top">
+  <div class="content">
+    <div class="top bread-nav footnote"><div class="left"><div class="flex-row" id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a>
+<span class="sep"></span><a class="cap breadcrumb" href="/">文章</a><span class="sep"></span><a class="cap breadcrumb-link" href="/categories/risc-v/">risc-v</a></div>
+<div class="flex-row" id="post-meta"><span class="text created">发布于：<time datetime="2022-12-15T07:18:37.000Z">2022-12-15</time></span><span class="sep updated"></span><span class="text updated">更新于：<time datetime="2022-12-28T11:18:47.000Z">2022-12-28</time></span></div></div></div>
+    
+    <div class="bottom only-title">
+      
+      <div class="text-area">
+        <h1 class="text title"><span>sfence.vma - Supervisor Memory Management Fence Instruction</span></h1>
+        
+      </div>
+    </div>
+    
+  </div>
+  </div><article class="md-text content"><p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://img-blog.csdnimg.cn/2afceb249d0e47c995d068be2c096cf6.png" alt="在这里插入图片描述"></p>
+<span id="more"></span>
+
+<p>The supervisor memory-management fence instruction SFENCE.VMA is used to synchronize updates to in-memory memory-management data structures with current execution. Instruction execution causes implicit reads and writes to these data structures; however, these implicit references are ordinarily not ordered with respect to explicit loads and stores. Executing an SFENCE.VMA instruction guarantees that any previous stores already visible to the current RISC-V hart are ordered before certain implicit references by subsequent instructions in that hart to the memorymanagement data structures. The specific set of operations ordered by SFENCE.VMA is determined by rs1 and rs2, as described below. SFENCE.VMA is also used to invalidate entries in the address-translation cache associated with a hart (see Section 5.3.2). Further details on the behavior of this instruction are described in Section 3.1.6.5 and Section 3.7.2.<br>supervisor memory-management fence 指令 SFENCE.VMA 用于将内存中内存管理数据结构的更新与当前执行同步。 指令执行导致对这些数据结构的隐式读取和写入； 但是，这些隐式引用通常不针对显式加载和存储进行排序。 执行 SFENCE.VMA 指令可确保当前 RISC-V hart 已经可见的任何先前存储在该 hart 中的后续指令对内存管理数据结构的某些隐式引用之前进行排序(<strong>意思就是这条指令前面的执行完了才能执行后面的</strong>)。 SFENCE.VMA 命令的特定操作集由 rs1 和 rs2 确定，如下所述。 SFENCE.VMA 还用于使与 hart 关联的地址转换缓存中的条目无效（参见第 5.3.2 节）。 有关此指令行为的更多详细信息，请参见第 3.1.6.5 节和第 3.7.2 节。</p>
+<hr>
+<p>The SFENCE.VMA is used to flush any local hardware caches related to address translation. It is specified as a fence rather than a TLB flush to provide cleaner semantics with respect to which instructions are affected by the flush operation and to support a wider variety of dynamic caching structures and memory-management schemes. SFENCE.VMA is also used by higher privilege levels to synchronize page table writes and the address translation hardware.<br>SFENCE.VMA 用于刷新与地址转换相关的任何本地<strong>硬件缓存</strong>。 它被指定为<strong>fence</strong>而不是 TLB 刷新，以提供关于哪些指令受刷新操作影响的更清晰的语义，并支持更广泛的动态缓存结构和内存管理方案。 SFENCE.VMA 也被更高权限级别用来同步页表写入和地址转换硬件。</p>
+<hr>
+<p>SFENCE.VMA orders only the local hart’s implicit references to the memory-management data structures.<br>SFENCE.VMA 仅对本地 hart 对内存管理数据结构的隐式引用进行排序。</p>
+<hr>
+<p>Consequently, other harts must be notified separately when the memory-management data structures have been modified. One approach is to use 1) a local data fence to ensure local writes are visible globally, then 2) an interprocessor interrupt to the other thread, then 3) a local SFENCE.VMA in the interrupt handler of the remote thread, and finally 4) signal back to originating thread that operation is complete. This is, of course, the RISC-V analog to a TLB shootdown.</p>
+<p>因此，当内存管理数据结构被修改时，必须单独通知其他 harts。 一种方法是使用</p>
+<ol>
+<li>本地 data fence 以确保本地写入全局可见</li>
+<li>向另一个线程发出处理器间中断</li>
+<li>远程线程的中断处理程序中的本地 SFENCE.VMA</li>
+<li>向原始线程发回信号，表明操作已完成。</li>
+</ol>
+<p>当然，这是 RISC-V 对 TLB shootdown的模拟。</p>
+<p>For the common case that the translation data structures have only been modified for a single address mapping (i.e., one page or superpage), rs1 can specify a virtual address within that mapping to effect a translation fence for that mapping only. Furthermore, for the common case that the translation data structures have only been modified for a single address-space identifier, rs2 can specify the address space. The behavior of SFENCE.VMA depends on rs1 and rs2 as follows:<br>对于仅针对单个地址映射（即一页或超页）修改翻译数据结构的常见情况，rs1 可以在该映射中指定一个虚拟地址以仅对该映射产生翻译fence。 此外，对于仅针对单个地址空间标识符修改了转换数据结构的常见情况，rs2 可以指定地址空间。 SFENCE.VMA 的行为取决于 rs1 和 rs2，如下所示：</p>
+<ul>
+<li><p>If <em><strong>rs1&#x3D;x0</strong></em> and <em><strong>rs2&#x3D;x0</strong></em>, the fence orders all reads and writes made to any level of the page tables, for all address spaces. The fence also invalidates all address-translation cache entries, for all address spaces.<br>如果 rs1&#x3D;x0 和 rs2&#x3D;x0，则栅栏对所有地址空间的页表的任何级别的所有读取和写入进行排序。 栅栏还使所有地址空间的所有地址转换缓存条目无效。</p>
+</li>
+<li><p>If <em><strong>rs1&#x3D;x0</strong></em> and <em><strong>rs2̸&#x3D;x0</strong></em>, the fence orders all reads and writes made to any level of the page tables, but only for the address space identified by integer register rs2. Accesses to global mappings (see Section 5.3.1) are not ordered. The fence also invalidates all address-translation cache entries matching the address space identified by integer register rs2, except for entries containing global mappings.<br>如果 rs1&#x3D;x0 且 rs2̸&#x3D;x0，则栅栏对所有对页表的任何级别进行的读取和写入进行排序，但仅限于整数寄存器 rs2 标识的地址空间。 对全局映射的访问（参见第 5.3.1 节）是无序的。 栅栏还使所有匹配由整数寄存器 rs2 标识的地址空间的地址转换缓存条目无效，但包含全局映射的条目除外。</p>
+</li>
+<li><p>If <em><strong>rs1̸&#x3D;x0</strong></em> and <em><strong>rs2&#x3D;x0</strong></em>, the fence orders only reads and writes made to leaf page table entries corresponding to the virtual address in rs1, for all address spaces. The fence also invalidates all address-translation cache entries that contain leaf page table entries corresponding to the virtual address in rs1, for all address spaces.<br>如果 rs1̸&#x3D;x0 且 rs2&#x3D;x0，对于所有地址空间，栅栏命令仅对与 rs1 中的虚拟地址对应的叶页表条目进行读写。 对于所有地址空间，fence 还使包含与 rs1 中的虚拟地址对应的叶页表条目的所有地址转换缓存条目无效。</p>
+</li>
+<li><p>If <em><strong>rs1̸&#x3D;x0</strong></em> and <em><strong>rs2̸&#x3D;x0</strong></em>, the fence orders only reads and writes made to leaf page table entries corresponding to the virtual address in rs1, for the address space identified by integer register rs2. Accesses to global mappings are not ordered. The fence also invalidates all addresstranslation cache entries that contain leaf page table entries corresponding to the virtual address in rs1 and that match the address space identified by integer register rs2, except for entries containing global mappings.<br>如果 rs1̸&#x3D;x0 且 rs2̸&#x3D;x0，对于整数寄存器 rs2 标识的地址空间，栅栏命令仅对对应于 rs1 中的虚拟地址的叶页表条目进行读取和写入。 对全局映射的访问没有顺序。 栅栏还使所有地址转换缓存条目无效，这些条目包含与 rs1 中的虚拟地址相对应的叶页表条目，并且与整数寄存器 rs2 标识的地址空间匹配，但包含全局映射的条目除外。</p>
+</li>
+</ul>
+<p>If the value held in rs1 is not a valid virtual address, then the SFENCE.VMA instruction has no effect. No exception is raised in this case.<br>如果 rs1 中保存的值不是有效的虚拟地址，则 SFENCE.VMA 指令无效。 在这种情况下不会引发异常。</p>
+<p>When rs2̸&#x3D;x0, bits SXLEN-1:ASIDMAX of the value held in rs2 are reserved for future standard use. Until their use is defined by a standard extension, they should be zeroed by software and ignored by current implementations. Furthermore, if ASIDLEN &lt; ASIDMAX, the implementation shall ignore bits ASIDMAX-1:ASIDLEN of the value held in rs2.<br>当 rs2̸&#x3D;x0 时，rs2 中保存的值的位 SXLEN-1:ASIDMAX 保留供将来标准使用。 在它们的使用被标准扩展定义之前，它们应该被软件清零并被当前的实现忽略。 此外，如果 ASIDLEN &lt; ASIDMAX，实现将忽略 rs2 中保存的值的位 ASIDMAX-1:ASIDLEN。</p>
+<hr>
+<p>It is always legal to over-fence, e.g., by fencing only based on a subset of the bits in rs1 and&#x2F;or rs2, and&#x2F;or by simply treating all SFENCE.VMA instructions as having rs1&#x3D;x0 and&#x2F;or rs2&#x3D;x0. For example, simpler implementations can ignore the virtual address in rs1 and the ASID value in rs2 and always perform a global fence. The choice not to raise an exception when an invalid virtual address is held in rs1 facilitates this type of simplification.<br>过度防护总是合法的，例如，仅基于 rs1 和&#x2F;或 rs2 中的位子集进行防护，和&#x2F;或简单地将所有 SFENCE.VMA 指令视为具有 rs1&#x3D;x0 和&#x2F;或 rs2&#x3D;x0 . 例如，更简单的实现可以忽略 rs1 中的虚拟地址和 rs2 中的 ASID 值，并始终执行全局隔离。 选择在 rs1 中保存无效虚拟地址时不引发异常有助于这种类型的简化。</p>
+<hr>
+<p>An implicit read of the memory-management data structures may return any translation for an address that was valid at any time since the most recent SFENCE.VMA that subsumes that address. The ordering implied by SFENCE.VMA does not place implicit reads and writes to the memorymanagement data structures into the global memory order in a way that interacts cleanly with the standard RVWMO ordering rules. In particular, even though an SFENCE.VMA orders prior explicit accesses before subsequent implicit accesses, and those implicit accesses are ordered before their associated explicit accesses, SFENCE.VMA does not necessarily place prior explicit accesses before subsequent explicit accesses in the global memory order. These implicit loads also need not otherwise obey normal program order semantics with respect to prior loads or stores to the same address.<br> 内存管理数据结构的隐式读取可能会返回自包含该地址的最近 SFENCE.VMA 以来任何时间有效的地址的任何转换。 SFENCE.VMA 隐含的排序不会以与标准 RVWMO 排序规则完全交互的方式将对内存管理数据结构的隐式读取和写入放入全局内存顺序。 特别是，即使 SFENCE.VMA 在后续隐式访问之前对先前的显式访问进行排序，并且那些隐式访问在其关联的显式访问之前进行排序，SFENCE.VMA 不一定将先前的显式访问置于全局内存顺序中的后续显式访问之前。 这些隐式加载也不需要以其他方式遵守关于先前加载或存储到同一地址的正常程序顺序语义。</p>
+<hr>
+<p>A consequence of this specification is that an implementation may use any translation for an address that was valid at any time since the most recent SFENCE.VMA that subsumes that address. In particular, if a leaf PTE is modified but a subsuming SFENCE.VMA is not executed, either the old translation or the new translation will be used, but the choice is unpredictable. The behavior is otherwise well-defined.<br>此规范的结果是，实现可以使用任何地址的任何转换，该地址自包含该地址的最新 SFENCE.VMA 以来一直有效。 特别是，如果修改叶 PTE 但未执行包含 SFENCE.VMA，则将使用旧翻译或新翻译，但选择是不可预测的。 该行为在其他方面是明确定义的。</p>
+<p>In a conventional TLB design, it is possible for multiple entries to match a single address if, for example, a page is upgraded to a superpage without first clearing the original non-leaf PTE’s valid bit and executing an SFENCE.VMA with rs1&#x3D;x0. In this case, a similar remark applies: it is unpredictable whether the old non-leaf PTE or the new leaf PTE is used, but the behavior is otherwise well defined.<br>在传统的 TLB 设计中，多个条目可能匹配单个地址，例如，如果页面升级为超级页面而无需首先清除原始非叶 PTE 的有效位并执行 rs1 &#x3D; x0 的 SFENCE.VMA . 在这种情况下，类似的评论适用：使用旧的非叶 PTE 还是新的叶 PTE 是不可预测的，但行为在其他方面是明确定义的。</p>
+<p>Another consequence of this specification is that it is generally unsafe to update a PTE using a set of stores of a width less than the width of the PTE, as it is legal for the implementation to read the PTE at any time, including when only some of the partial stores have taken effect.This specification permits the caching of PTEs whose V (Valid) bit is clear. Operating systems must be written to cope with this possibility, but implementers are reminded that eagerly caching invalid PTEs will reduce performance by causing additional page faults.<br>此规范的另一个结果是，使用一组宽度小于 PTE 宽度的存储来更新 PTE 通常是不安全的，因为实现在任何时候读取 PTE 都是合法的，包括当只有一些 的部分商店已经生效。此规范允许缓存 V（有效）位已清除的 PTE。 必须编写操作系统来应对这种可能性，但提醒实施者，急切缓存无效的 PTE 会导致额外的页面错误，从而降低性能。</p>
+<hr>
+<p>Implementations must only perform implicit reads of the translation data structures pointed to by the current contents of the satp register or a subsequent valid (V&#x3D;1) translation data structure entry, and must only raise exceptions for implicit accesses that are generated as a result of instruction execution, not those that are performed speculatively. Changes to the sstatus fields SUM and MXR take effect immediately, without the need to execute an SFENCE.VMA instruction. Changing satp.MODE from Bare to other modes and vice versa also takes effect immediately, without the need to execute an SFENCE.VMA instruction. Likewise, changes to satp.ASID take effect immediately.<br>实现必须只对 satp 寄存器的当前内容或后续有效（V &#x3D; 1）翻译数据结构条目指向的翻译数据结构执行隐式读取，并且必须只对由于以下原因生成的隐式访问引发异常 指令执行，而不是那些推测性地执行的指令。 对 sstatus 字段 SUM 和 MXR 的更改立即生效，无需执行 SFENCE.VMA 指令。 将 satp.MODE 从 Bare 更改为其他模式（反之亦然）也会立即生效，无需执行 SFENCE.VMA 指令。 同样，对 satp.ASID 的更改会立即生效。</p>
+<hr>
+<p>The following common situations typically require executing an SFENCE.VMA instruction:<br>以下常见情况通常需要执行 SFENCE.VMA 指令：</p>
+<ul>
+<li><p>When software recycles an ASID (i.e., reassociates it with a different page table), it should first change satp to point to the new page table using the recycled ASID, then execute SFENCE.VMA with rs1&#x3D;x0 and rs2 set to the recycled ASID. Alternatively, software can execute the same SFENCE.VMA instruction while a different ASID is loaded into satp, provided the next time satp is loaded with the recycled ASID, it is simultaneously loaded with the new page table.<br>当软件回收 ASID（即，将其与不同的页表重新关联）时，它应该首先更改 satp 以使用回收的 ASID 指向新的页表，然后执行 SFENCE.VMA 并将 rs1&#x3D;x0 和 rs2 设置为回收的 ASID。 或者，软件可以在将不同的 ASID 加载到 satp 时执行相同的 SFENCE.VMA 指令，前提是下次 satp 加载回收的 ASID 时，它会同时加载新的页表。</p>
+</li>
+<li><p>If the implementation does not provide ASIDs, or software chooses to always use ASID 0, then after every satp write, software should execute SFENCE.VMA with rs1&#x3D;x0. In the common case that no global translations have been modified, rs2 should be set to a register other than x0 but which contains the value zero, so that global translations are not flushed.<br>如果实施不提供 ASID，或者软件选择始终使用 ASID 0，则在每次 satp 写入之后，软件应执行 SFENCE.VMA 并设置 rs1&#x3D;x0。 在没有修改全局翻译的常见情况下，rs2 应设置为除 x0 但包含值零的寄存器，以便不刷新全局翻译。</p>
+</li>
+<li><p>If software modifies a non-leaf PTE, it should execute SFENCE.VMA with rs1&#x3D;x0. If any PTE along the traversal path had its G bit set, rs2 must be x0; otherwise, rs2 should be set to the ASID for which the translation is being modified.<br>如果软件修改了非叶 PTE，它应该使用 rs1&#x3D;x0 执行 SFENCE.VMA。 如果遍历路径上的任何 PTE 都设置了 G 位，则 rs2 必须为 x0； 否则，rs2 应设置为要为其修改翻译的 ASID。 如果软件修改叶 PTE，它应该执行 SFENCE.VMA，并将 rs1 设置为页面内的虚拟地址。 如果遍历路径上的任何 PTE 都设置了 G 位，则 rs2 必须为 x0； 否则，rs2 应设置为要为其修改翻译的 ASID。</p>
+</li>
+<li><p>If software modifies a leaf PTE, it should execute SFENCE.VMA with rs1 set to a virtual address within the page. If any PTE along the traversal path had its G bit set, rs2 must be x0; otherwise, rs2 should be set to the ASID for which the translation is being modified.<br>如果软件修改叶 PTE，它应该执行 SFENCE.VMA，并将 rs1 设置为页面内的虚拟地址。 如果遍历路径上的任何 PTE 都设置了 G 位，则 rs2 必须为 x0； 否则，rs2 应设置为要为其修改翻译的 ASID。</p>
+</li>
+<li><p>For the special cases of increasing the permissions on a leaf PTE and changing an invalid PTE to a valid leaf, software may choose to execute the SFENCE.VMA lazily. After modifying the PTE but before executing SFENCE.VMA, either the new or old permissions will be used. In the latter case, a page-fault exception might occur, at which point software should execute SFENCE.VMA in accordance with the previous bullet point.<br>对于增加叶 PTE 权限并将无效 PTE 更改为有效叶的特殊情况，软件可以选择延迟执行 SFENCE.VMA。 在修改 PTE 之后但在执行 SFENCE.VMA 之前，将使用新权限或旧权限。 在后一种情况下，可能会发生页面错误异常，此时软件应根据前面的要点执行 SFENCE.VMA。</p>
+</li>
+</ul>
+<hr>
+<p>If a hart employs an address-translation cache, that cache must appear to be private to that hart. In particular, the meaning of an ASID is local to a hart; software may choose to use the same ASID to refer to different address spaces on different harts.<br>如果 hart 使用地址转换缓存，则该缓存必须看起来是该 hart 私有的。 特别是，ASID 的含义对 hart 来说是本地的； 软件可以选择使用相同的 ASID 来引用不同 harts 上的不同地址空间。</p>
+<hr>
+<p>A future extension could redefine ASIDs to be global across the SEE, enabling such options as<br>shared translation caches and hardware support for broadcast TLB shootdown. However, as OSes<br>have evolved to significantly reduce the scope of TLB shootdowns using novel ASID-management<br>techniques, we expect the local-ASID scheme to remain attractive for its simplicity and possibly<br>better scalability.<br>未来的扩展可能会将 ASID 重新定义为跨 SEE 的全局，从而启用共享翻译缓存和广播 TLB shootdown的硬件支持等选项。 然而，随着操作系统已经发展到使用新的 ASID 管理技术显着减少 TLB shootdown的范围，我们预计本地 ASID 方案将因其简单性和可能更好的可扩展性而保持吸引力。</p>
+<hr>
+<p>For implementations that make satp.MODE read-only zero (always Bare), attempts to execute an<br>SFENCE.VMA instruction might raise an illegal instruction exception.<br>对于使 satp.MODE 只读为零（始终为 Bare）的实现，尝试执行 SFENCE.VMA 指令可能会引发非法指令异常。</p>
+
+<div class="article-footer fs14">
+    <section id="license">
+      <div class="header"><span>许可协议</span></div>
+      <div class="body"><p>本文采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+</div>
+    </section>
+    </div>
+</article>
+<div class="related-wrap" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">较新文章</div><a href="/2022/12/28/hello-world/">How to write articles use hexo markdown</a></div><div class="item" id="next"><div class="note">较早文章</div><a href="/2022/10/09/Standard-Extensions/">Standard Extensions</a></div></section></div>
+
+
+
+
+
+
+<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">wangyijieonline</a> 使用 <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.29.1">Stellar 1.29.1</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+</div></footer>
+<div class="main-mask" onclick="sidebar.dismiss()"></div></div><aside class="l_right">
+</aside><div class='float-panel blur'>
+  <button type='button' style='display:none' class='laptop-only rightbar-toggle mobile' onclick='sidebar.rightbar()'>
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg>
+  </button>
+  <button type='button' style='display:none' class='mobile-only leftbar-toggle mobile' onclick='sidebar.leftbar()'>
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 11c0-3.771 0-5.657 1.172-6.828C4.343 3 6.229 3 10 3h4c3.771 0 5.657 0 6.828 1.172C22 5.343 22 7.229 22 11v2c0 3.771 0 5.657-1.172 6.828C19.657 21 17.771 21 14 21h-4c-3.771 0-5.657 0-6.828-1.172C2 18.657 2 16.771 2 13z"/><path id="sep" stroke-linecap="round" d="M5.5 10h6m-5 4h4m4.5 7V3"/></g></svg>
+  </button>
+</div>
+</div><div class="scripts">
+<script type="text/javascript">
+  const ctx = {
+    date_suffix: {
+      just: `刚刚`,
+      min: `分钟前`,
+      hour: `小时前`,
+      day: `天前`,
+    },
+    root : `/`,
+  };
+
+  // required plugins (only load if needs)
+  if (`local_search`) {
+    ctx.search = {};
+    ctx.search.service = `local_search`;
+    if (ctx.search.service == 'local_search') {
+      let service_obj = Object.assign({}, `{"field":"all","path":"/search.json","content":true,"sort":"-date"}`);
+      ctx.search[ctx.search.service] = service_obj;
+    }
+  }
+  const def = {
+    avatar: `https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/3442075.svg`,
+    cover: `https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/cover/76b86c0226ffd.svg`,
+  };
+  const deps = {
+    jquery: `https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js`,
+    marked: `https://cdn.jsdelivr.net/npm/marked@13.0.1/lib/marked.umd.min.js`
+  }
+  
+
+</script>
+
+<script type="text/javascript">
+  const utils = {
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    css: (href, before, media, attributes) => {
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    js: (src, opt) => new Promise((resolve, reject) => {
+      var script = document.createElement('script');
+      if (src.startsWith('/')){
+        src = ctx.root + src.substring(1);
+      }
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    jq: (fn) => {
+      if (typeof jQuery === 'undefined') {
+        utils.js(deps.jquery).then(fn)
+      } else {
+        fn()
+      }
+    },
+    
+    onLoading: (el) => {
+      if (el) {
+        $(el).append('<div class="loading-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"><path stroke-dasharray="60" stroke-dashoffset="60" stroke-opacity=".3" d="M12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="1.3s" values="60;0"/></path><path stroke-dasharray="15" stroke-dashoffset="15" d="M12 3C16.9706 3 21 7.02944 21 12"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.3s" values="15;0"/><animateTransform attributeName="transform" dur="1.5s" repeatCount="indefinite" type="rotate" values="0 12 12;360 12 12"/></path></g></svg></div>');
+      }
+    },
+    onLoadSuccess: (el) => {
+      if (el) {
+        $(el).find('.loading-wrap').remove();
+      }
+    },
+    onLoadFailure: (el) => {
+      if (el) {
+        $(el).find('.loading-wrap svg').remove();
+        $(el).find('.loading-wrap').append('<svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="60" stroke-dashoffset="60" d="M12 3L21 20H3L12 3Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.5s" values="60;0"/></path><path stroke-dasharray="6" stroke-dashoffset="6" d="M12 10V14"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.6s" dur="0.2s" values="6;0"/></path></g><circle cx="12" cy="17" r="1" fill="currentColor" fill-opacity="0"><animate fill="freeze" attributeName="fill-opacity" begin="0.8s" dur="0.4s" values="0;1"/></circle></svg>');
+        $(el).find('.loading-wrap').addClass('error');
+      }
+    },
+    request: (el, url, callback, onFailure) => {
+      let retryTimes = 3;
+      utils.onLoading(el);
+      function req() {
+        return new Promise((resolve, reject) => {
+          let status = 0; // 0 等待 1 完成 2 超时
+          let timer = setTimeout(() => {
+            if (status === 0) {
+              status = 2;
+              timer = null;
+              reject('请求超时');
+              if (retryTimes == 0) {
+                onFailure();
+              }
+            }
+          }, 5000);
+          fetch(url).then(function(response) {
+            if (status !== 2) {
+              clearTimeout(timer);
+              resolve(response);
+              timer = null;
+              status = 1;
+            }
+            if (response.ok) {
+              return response.json();
+            }
+            throw new Error('Network response was not ok.');
+          }).then(function(data) {
+            retryTimes = 0;
+            utils.onLoadSuccess(el);
+            callback(data);
+          }).catch(function(error) {
+            if (retryTimes > 0) {
+              retryTimes -= 1;
+              setTimeout(() => {
+                req();
+              }, 5000);
+            } else {
+              utils.onLoadFailure(el);
+              onFailure();
+            }
+          });
+        });
+      }
+      req();
+    },
+  };
+</script>
+
+<script>
+  const sidebar = {
+    leftbar: () => {
+      if (l_body) {
+        l_body.toggleAttribute('leftbar');
+        l_body.removeAttribute('rightbar');
+      }
+    },
+    rightbar: () => {
+      if (l_body) {
+        l_body.toggleAttribute('rightbar');
+        l_body.removeAttribute('leftbar');
+      }
+    },
+    dismiss: () => {
+      if (l_body) {
+        l_body.removeAttribute('leftbar');
+        l_body.removeAttribute('rightbar');
+      }
+    },
+    toggleTOC: () => {
+      document.querySelector('#data-toc').classList.toggle('collapse');
+    }
+  }
+</script>
+<script type="text/javascript">
+  (() => {
+    const tagSwitchers = document.querySelectorAll('.tag-subtree.parent-tag > a > .tag-switcher-wrapper')
+    for (const tagSwitcher of tagSwitchers) {
+      tagSwitcher.addEventListener('click', (e) => {
+        const parent = e.target.closest('.tag-subtree.parent-tag')
+        parent.classList.toggle('expanded')
+        e.preventDefault()
+      })
+    }
+
+    // Get active tag from query string, then activate it.
+    const urlParams = new URLSearchParams(window.location.search)
+    const activeTag = urlParams.get('tag')
+    if (activeTag) {
+      let tag = document.querySelector(`.tag-subtree[data-tag="${activeTag}"]`)
+      if (tag) {
+        tag.querySelector('a').classList.add('active')
+        
+        while (tag) {
+          tag.classList.add('expanded')
+          tag = tag.parentElement.closest('.tag-subtree.parent-tag')
+        }
+      }
+    }
+  })()
+</script>
+
+
+<!-- required -->
+<script src="/js/main.js?v=1.29.1" defer></script>
+
+<script type="text/javascript">
+  const applyTheme = (theme) => {
+    if (theme === 'auto') {
+      document.documentElement.removeAttribute('data-theme')
+    } else {
+      document.documentElement.setAttribute('data-theme', theme)
+    }
+
+    applyThemeToGiscus(theme)
+  }
+
+  const applyThemeToGiscus = (theme) => {
+    theme = theme === 'auto' ? 'preferred_color_scheme' : theme
+
+    const cmt = document.getElementById('giscus')
+    if (cmt) {
+      // This works before giscus load.
+      cmt.setAttribute('data-theme', theme)
+    }
+
+    const iframe = document.querySelector('#comments > section.giscus > iframe')
+    if (iframe) {
+      // This works after giscus loaded.
+      const src = iframe.src
+      const newSrc = src.replace(/theme=[\w]+/, `theme=${theme}`)
+      iframe.src = newSrc
+    }
+  }
+
+  const switchTheme = () => {
+    // light -> dark -> auto -> light -> ...
+    const currentTheme = document.documentElement.getAttribute('data-theme')
+    let newTheme;
+    switch (currentTheme) {
+      case 'light':
+        newTheme = 'dark'
+        break
+      case 'dark':
+        newTheme = 'auto'
+        break
+      default:
+        newTheme = 'light'
+    }
+    applyTheme(newTheme)
+    window.localStorage.setItem('Stellar.theme', newTheme)
+
+    const messages = {
+      light: `切换到浅色模式`,
+      dark: `切换到深色模式`,
+      auto: `切换到跟随系统配色`,
+    }
+    hud?.toast?.(messages[newTheme])
+  }
+
+  (() => {
+    // Apply user's preferred theme, if any.
+    const theme = window.localStorage.getItem('Stellar.theme')
+    if (theme !== null) {
+      applyTheme(theme)
+    }
+  })()
+</script>
+
+
+<!-- optional -->
+
+
+
+<script defer>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    ctx.services = Object.assign({}, JSON.parse(`{"mdrender":{"js":"/js/services/mdrender.js"},"siteinfo":{"js":"/js/services/siteinfo.js","api":null},"ghinfo":{"js":"/js/services/ghinfo.js"},"sites":{"js":"/js/services/sites.js"},"friends":{"js":"/js/services/friends.js"},"timeline":{"js":"/js/services/timeline.js"},"fcircle":{"js":"/js/services/fcircle.js"},"weibo":{"js":"/js/services/weibo.js"},"memos":{"js":"/js/services/memos.js"}}`));
+    for (let id of Object.keys(ctx.services)) {
+      const js = ctx.services[id].js;
+      if (id == 'siteinfo') {
+        ctx.cardlinks = document.querySelectorAll('a.link-card[cardlink]');
+        if (ctx.cardlinks?.length > 0) {
+          utils.js(js, { defer: true }).then(function () {
+            setCardLink(ctx.cardlinks);
+          });
+        }
+      } else {
+        const els = document.getElementsByClassName(`ds-${id}`);
+        if (els?.length > 0) {
+          utils.jq(() => {
+            if (id == 'timeline' || 'memos' || 'marked') {
+              utils.js(deps.marked).then(function () {
+                utils.js(js, { defer: true });
+              });
+            } else {
+              utils.js(js, { defer: true });
+            }
+          });
+        }
+      }
+    }
+  });
+</script>
+
+<script>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    ctx.search = {
+      path: `/search.json`,
+    }
+    utils.js('/js/search/local-search.js', { defer: true });
+  });
+</script><script>
+  window.FPConfig = {
+    delay: 0,
+    ignoreKeywords: [],
+    maxRPS: 5,
+    hoverDelay: 25
+  };
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/flying-pages@2/flying-pages.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@19.1.3/dist/lazyload.min.js"></script>
+<script>
+  // https://www.npmjs.com/package/vanilla-lazyload
+  // Set the options globally
+  // to make LazyLoad self-initialize
+  window.lazyLoadOptions = {
+    elements_selector: ".lazy",
+  };
+  // Listen to the initialization event
+  // and get the instance of LazyLoad
+  window.addEventListener(
+    "LazyLoad::Initialized",
+    function (event) {
+      window.lazyLoadInstance = event.detail.instance;
+    },
+    false
+  );
+  document.addEventListener('DOMContentLoaded', function () {
+    window.lazyLoadInstance?.update();
+  });
+</script><script>
+  ctx.fancybox = {
+    selector: `.timenode p>img`,
+    css: `https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css`,
+    js: `https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js`
+  };
+  var selector = '[data-fancybox]:not(.error)';
+  if (ctx.fancybox.selector) {
+    selector += `, ${ctx.fancybox.selector}`
+  }
+  var needFancybox = document.querySelectorAll(selector).length !== 0;
+  if (!needFancybox) {
+    const els = document.getElementsByClassName('ds-memos');
+    if (els != undefined && els.length > 0) {
+      needFancybox = true;
+    }
+  }
+  if (needFancybox) {
+    utils.css(ctx.fancybox.css);
+    utils.js(ctx.fancybox.js, { defer: true }).then(function () {
+      Fancybox.bind(selector, {
+        hideScrollbar: false,
+        Thumbs: {
+          autoStart: false,
+        },
+        caption: (fancybox, slide) => {
+          return slide.triggerEl.alt || slide.triggerEl.dataset.caption || null
+        }
+      });
+    })
+  }
+</script>
+<script>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    const swiper_api = document.getElementById('swiper-api');
+    if (swiper_api != undefined) {
+      utils.css(`https://unpkg.com/swiper@10.3.1/swiper-bundle.min.css`);
+      utils.js(`https://unpkg.com/swiper@10.3.1/swiper-bundle.min.js`, { defer: true }).then(function () {
+        const effect = swiper_api.getAttribute('effect') || '';
+        var swiper = new Swiper('.swiper#swiper-api', {
+          slidesPerView: 'auto',
+          spaceBetween: 8,
+          centeredSlides: true,
+          effect: effect,
+          rewind: true,
+          pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+          },
+          navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+          },
+        });
+      })
+    }
+  });
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    window.codeElements = document.querySelectorAll('.code');
+    if (window.codeElements.length > 0) {
+      ctx.copycode = {
+        default_text: `Copy`,
+        success_text: `Copied`,
+        toast: `复制成功`,
+      };
+      utils.js('/js/plugins/copycode.js');
+    }
+  });
+</script>
+
+
+<!-- inject -->
+
+</div></body></html>
